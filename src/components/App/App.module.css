@@ -36,3 +36,7 @@
   color: white;
   font-weight: bold;
 }
+
+.movie-grid {
+  transition: opacity 0.3s ease;
+}
