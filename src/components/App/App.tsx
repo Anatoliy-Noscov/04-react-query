@@ -16,14 +16,13 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const { data, isPending, isError, error, isSuccess } =
-    useQuery<MoviesResponse>({
-      queryKey: ["movies", query, page],
-      queryFn: () => getMovies(query, page),
-      enabled: !!query,
-      retry: false,
-      placeholderData: keepPreviousData,
-    });
+  const { data, isPending, isError, isSuccess } = useQuery<MoviesResponse>({
+    queryKey: ["movies", query, page],
+    queryFn: () => getMovies(query, page),
+    enabled: !!query,
+    retry: false,
+    placeholderData: keepPreviousData,
+  });
 
   useEffect(() => {
     if (isError) {
@@ -52,19 +51,22 @@ export default function App() {
       <Toaster position="top-center" />
       <SearchBar onSubmit={handleSearch} />
 
-      {data?.results && data.results.length > 0 && data.total_pages > 1 && (
-        <ReactPaginate
-          pageCount={Math.min(data.total_pages, 500)}
-          pageRangeDisplayed={5}
-          marginPagesDisplayed={1}
-          onPageChange={handlePageChange}
-          forcePage={page - 1}
-          containerClassName={css.pagination}
-          activeClassName={css.active}
-          previousLabel="←"
-          nextLabel="→"
-        />
-      )}
+      {query &&
+        data?.results &&
+        data.results.length > 0 &&
+        data.total_pages > 1 && (
+          <ReactPaginate
+            pageCount={Math.min(data.total_pages, 500)}
+            pageRangeDisplayed={5}
+            marginPagesDisplayed={1}
+            onPageChange={handlePageChange}
+            forcePage={page - 1}
+            containerClassName={css.pagination}
+            activeClassName={css.active}
+            previousLabel="←"
+            nextLabel="→"
+          />
+        )}
 
       {!query && !isPending && (
         <div className={css.placeholder}>Enter movie title to start search</div>
@@ -72,7 +74,7 @@ export default function App() {
 
       {isPending && query && <Loader />}
 
-      {isError && <ErrorMessage error={error} />}
+      {isError && <ErrorMessage />}
 
       {data?.results && data.results.length > 0 && (
         <MovieGrid
